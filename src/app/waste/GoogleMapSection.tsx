@@ -1,9 +1,13 @@
-// GoogleMapSection.tsx
 "use client";
 import React, { useCallback, useState, useEffect } from "react";
-import { GoogleMap, useJsApiLoader } from "@react-google-maps/api"; // Ensure this import is correct
+import {
+  GoogleMap,
+  useJsApiLoader,
+  LoadScriptProps,
+} from "@react-google-maps/api";
 import MarkerItem from "./Marker";
 import { getPendingReports } from "@/utils/db/actions";
+import { useGoogleMaps } from "@/components/providers/GoogleMapsProvider";
 
 const containerStyle = {
   width: "100%",
@@ -28,16 +32,18 @@ interface Report {
   status: string;
   createdAt: string;
   collectorId: number | null;
+  latitude?: number;
+  longitude?: number;
 }
 
-function GoogleMapSection(): JSX.Element {
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "", // Ensure the key is set
-  });
+const defaultCenter: Coordinates = { lat: 12.9141, lng: 74.856 };
 
-  const [center, setCenter] = useState<Coordinates>({ lat: 12.9141, lng: 74.856 });
+function GoogleMapSection(): JSX.Element {
+  const { isLoaded } = useGoogleMaps();
+
+  const [center, setCenter] = useState<Coordinates>(defaultCenter);
   const [reports, setReports] = useState<Report[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -45,32 +51,39 @@ function GoogleMapSection(): JSX.Element {
         const fetchedReports = await getPendingReports();
         console.log("Fetched Reports from API:", fetchedReports);
 
-        const processedReports = fetchedReports.map((report) => {
-          const { coordinates, ...rest } = report;
-          const { latitude, longitude } = coordinates || {};
-          if (!latitude || !longitude) {
-            console.error(`Missing coordinates for report ID: ${report.id}`);
-          }
-          return {
-            ...rest,
-            latitude,
-            longitude,
-          };
-        });
+        const processedReports = fetchedReports
+          .map((report: Report) => {
+            const { coordinates, ...rest } = report;
+            const { latitude, longitude } = coordinates || {};
+
+            if (!latitude || !longitude) {
+              console.warn(`Missing coordinates for report ID: ${report.id}`);
+              return null;
+            }
+
+            return {
+              ...rest,
+              latitude,
+              longitude,
+            };
+          })
+          .filter((report): report is Report => report !== null);
 
         setReports(processedReports);
 
-        if (processedReports.length > 0) {
+        if (processedReports.length > 0 && window.google) {
           const bounds = new window.google.maps.LatLngBounds();
           processedReports.forEach((report) => {
-            console.log("Processed Report Coordinates:", report.latitude, report.longitude);
-            bounds.extend({ lat: report.latitude, lng: report.longitude });
+            if (report.latitude && report.longitude) {
+              bounds.extend({ lat: report.latitude, lng: report.longitude });
+            }
           });
           const mapCenter = bounds.getCenter();
           setCenter({ lat: mapCenter.lat(), lng: mapCenter.lng() });
         }
       } catch (error) {
         console.error("Error fetching reports:", error);
+        setError("Failed to fetch reports. Please try again later.");
       }
     };
 
@@ -81,20 +94,26 @@ function GoogleMapSection(): JSX.Element {
     (mapInstance: google.maps.Map) => {
       if (reports.length > 0) {
         const bounds = new window.google.maps.LatLngBounds();
-        reports.forEach((report) =>
-          bounds.extend({ lat: report.latitude, lng: report.longitude })
-        );
+        reports.forEach((report) => {
+          if (report.latitude && report.longitude) {
+            bounds.extend({ lat: report.latitude, lng: report.longitude });
+          }
+        });
         mapInstance.fitBounds(bounds);
       } else {
         mapInstance.setCenter(center);
         mapInstance.setZoom(15);
       }
     },
-    [reports, center]
+    [reports, center],
   );
 
+  if (error) {
+    return <div className="p-4 text-red-500">{error}</div>;
+  }
+
   if (!isLoaded) {
-    return <div>Loading...</div>;
+    return <div className="p-4">Loading map...</div>;
   }
 
   return (
@@ -103,6 +122,11 @@ function GoogleMapSection(): JSX.Element {
       center={center}
       zoom={15}
       onLoad={onLoad}
+      options={{
+        fullscreenControl: true,
+        streetViewControl: true,
+        mapTypeControl: true,
+      }}
     >
       {reports.map((report) => (
         <MarkerItem key={report.id} bin={report} />

@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    --font-roboto: "Roboto", sans-serif;
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
@@ -60,6 +61,33 @@
 }
 
 @layer base {
+  html {
+    font-family: var(--font-roboto);
+  }
+
+  body {
+    @apply font-sans;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-roboto);
+    @apply font-medium;
+  }
+
+  p,
+  span,
+  div,
+  button,
+  input,
+  select,
+  textarea {
+    font-family: var(--font-roboto);
+  }
   /* Reset styles */
   * {
     margin: 0;
