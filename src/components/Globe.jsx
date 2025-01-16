@@ -19,8 +19,8 @@ const Globe = () => {
   return (
     <div className="relative w-full h-full">
       <Canvas 
-        camera={{ position: [0, 0, 4], fov: 45 }}
-        style={{ height: '600px' }}
+        camera={{ position: [0, 0, 6], fov: 60 }} // Adjusted camera position for better initial view
+        style={{ height: '600px', width: '110%' }} // Ensure the canvas takes full width
       >
         <directionalLight 
           position={[1, 2, 3]} 
@@ -39,7 +39,7 @@ const Globe = () => {
         <OrbitControls 
           enableZoom={true}
           minDistance={2}
-          maxDistance={10}
+          maxDistance={12} // Increased maxDistance for better zoom out
           autoRotate={false}
         />
         
@@ -53,7 +53,10 @@ const Globe = () => {
         />
       </Canvas>
     </div>
+
   );
 };
+
+
 
 export default Globe;

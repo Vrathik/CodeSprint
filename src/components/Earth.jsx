@@ -101,7 +101,7 @@ const Earth = forwardRef((props, ref) => {
   enhancedMaterial.emissive = new THREE.Color(0x112244);
   enhancedMaterial.emissiveIntensity = 0.2;
 
-  const radius = 1.128; // Match the Earth's scale
+  const radius = 3; // Set the default size of the globe
 
   return (
     <group ref={ref} {...props} dispose={null}>
@@ -121,6 +121,7 @@ const Earth = forwardRef((props, ref) => {
         );
       })}
     </group>
+
   );
 });
 

@@ -19,7 +19,7 @@ const poppins = Poppins({
 
 function AnimatedGlobe() {
   return (
-    <div className="relative w-64 h-64 mx-auto mb-8">
+    <div className="relative w-64 h-64 mx-auto mb-8 ml-6">
       <div className="absolute inset-0 rounded-full bg-green-500 opacity-20 animate-pulse"></div>
       <div className="absolute inset-2 rounded-full bg-green-400 opacity-40 animate-ping"></div>
       <div className="absolute inset-4 rounded-full bg-green-300 opacity-60 animate-spin"></div>
@@ -84,8 +84,8 @@ export default function Home() {
   }
 
   return (
-    <div className={`container mx-auto px-4 py-16 ${poppins.className}`}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 mb-20 mt-10">
+    <div className={`container mr-64 mt-8  mx-auto px-4 py-16 ${poppins.className}`}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 mb-20 mt-10 mr-48">
         <section className="flex flex-col justify-between mt-6">
           <AnimatedGlobe />
           <h1 className="text-6xl font-bold mb-6 text-gray-800 tracking-tight">
@@ -119,7 +119,7 @@ export default function Home() {
         </section>
       </div>
 
-      <section className="grid md:grid-cols-3 gap-10 mb-20">
+      <section className="grid md:grid-cols-3 gap-28 mb-20 ml-14">
         <FeatureCard
           icon={Leaf}
           title="Eco-Friendly"
@@ -139,7 +139,7 @@ export default function Home() {
 
       <section className="bg-white p-10 rounded-3xl shadow-lg mb-20">
         <h2 className="text-4xl font-bold mb-12 text-center text-gray-800">Our Impact</h2>
-        <div className="grid md:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-4">
           <ImpactCard title="Waste Collected" value={`${impactData.wasteCollected} kg`} icon={Recycle} />
           <ImpactCard title="Reports Submitted" value={impactData.reportsSubmitted.toString()} icon={MapPin} />
           <ImpactCard title="Tokens Earned" value={impactData.tokensEarned.toString()} icon={Coins} />

@@ -131,156 +131,154 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white border-b border-gray-200 fixed w-full top-0 left-0 z-30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* Logo Section */}
-          <div className="flex-shrink-0 flex pr-4 items-center">
-            <Link href="/" className="flex items-center">
-              <img
-                src="/logo.png"
-                alt="SmartCycle Logo"
-                className="h-8 w-auto"
-              />
-              <span className="ml-2 font-bold text-xl text-green-600 hidden sm:block">
-                SmartCycle
-              </span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-center">
+        {/* Logo Section - Moved to the far left */}
+        <div className="flex-shrink-0 flex items-center pr-4 relative right-24"> {/* Adjusted this section */}
+          <Link href="/" className="flex items-center">
+            <img
+              src="/logo.png"
+              alt="SmartCycle Logo"
+              className="h-16 w-auto" // Adjust size as needed
+            />
+            <span className="ml-2 text-4xl font-bold text-green-600 hidden sm:block">
+              SmartCycle
+            </span>
+          </Link>
+        </div>
+  
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex items-center space-x-6">
+          {navigationItems.map((item) => (
+            <Link key={item.href} href={item.href}>
+              <Button
+                variant={pathname === item.href ? "secondary" : "ghost"}
+                className={`flex items-center space-x-2 text-lg ${
+                  pathname === item.href
+                    ? "bg-green-100 text-green-800"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+                size="lg"
+              >
+                <item.icon className="h-5 w-5" />
+                <span>{item.label}</span>
+              </Button>
             </Link>
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-4">
-            {navigationItems.map((item) => (
-              <Link key={item.href} href={item.href}>
-                <Button
-                  variant={pathname === item.href ? "secondary" : "ghost"}
-                  className={`flex items-center space-x-2 ${
-                    pathname === item.href
-                      ? "bg-green-100 text-green-800"
-                      : "text-gray-600 hover:bg-gray-100"
-                  }`}
-                  size="sm"
-                >
-                  <item.icon className="h-4 w-4" />
-                  <span>{item.label}</span>
-                </Button>
-              </Link>
-            ))}
-
-            {/* More Menu */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  More
-                  <ChevronDown className="ml-1 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                {moreItems.map((item) => (
-                  <DropdownMenuItem key={item.href}>
-                    <Link href={item.href} className="flex items-center">
-                      <item.icon className="h-4 w-4 mr-2" />
-                      {item.label}
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-          {/* Right Section */}
-          <div className="hidden md:flex items-center space-x-4">
-            {isSignedIn ? (
-              <>
-                {/* Notifications */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="relative">
-                      <Bell className="h-5 w-5" />
-                      {notifications.length > 0 && (
-                        <Badge className="absolute -top-1 -right-1 px-1 min-w-[1.2rem] h-5">
-                          {notifications.length}
-                        </Badge>
-                      )}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-64">
-                    {notifications.length > 0 ? (
-                      notifications.map((notification) => (
-                        <DropdownMenuItem
-                          key={notification.id}
-                          onClick={() =>
-                            handleNotificationClick(notification.id)
-                          }
-                        >
-                          <div className="flex flex-col">
-                            <span className="font-medium">
-                              {notification.type}
-                            </span>
-                            <span className="text-sm text-gray-500">
-                              {notification.message}
-                            </span>
-                          </div>
-                        </DropdownMenuItem>
-                      ))
-                    ) : (
-                      <DropdownMenuItem>No new notifications</DropdownMenuItem>
+          ))}
+  
+          {/* More Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="lg">
+                More
+                <ChevronDown className="ml-1 h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {moreItems.map((item) => (
+                <DropdownMenuItem key={item.href}>
+                  <Link href={item.href} className="flex items-center text-lg">
+                    <item.icon className="h-5 w-5 mr-2" />
+                    {item.label}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+  
+        {/* Right Section */}
+        <div className="hidden md:flex items-center space-x-6">
+          {isSignedIn ? (
+            <>
+              {/* Notifications */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative">
+                    <Bell className="h-6 w-6" />
+                    {notifications.length > 0 && (
+                      <Badge className="absolute -top-1 -right-1 px-1 min-w-[1.5rem] h-5">
+                        {notifications.length}
+                      </Badge>
                     )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                {/* Balance */}
-                <div className="flex items-center">
-                  <Coins className="h-5 w-5 text-green-500" />
-                  <span className="ml-1 font-semibold">
-                    {balance.toFixed(2)}
-                  </span>
-                </div>
-
-                {/* User Menu */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="flex items-center">
-                      <User className="h-5 w-5 mr-1" />
-                      <span className="hidden sm:block mr-1">
-                        {user?.fullName || "User"}
-                      </span>
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
-                      <Link href="/settings">Profile</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>Settings</DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <SignOutButton />
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-64">
+                  {notifications.length > 0 ? (
+                    notifications.map((notification) => (
+                      <DropdownMenuItem
+                        key={notification.id}
+                        onClick={() =>
+                          handleNotificationClick(notification.id)
+                        }
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-medium text-lg">
+                            {notification.type}
+                          </span>
+                          <span className="text-sm text-gray-500">
+                            {notification.message}
+                          </span>
+                        </div>
+                      </DropdownMenuItem>
+                    ))
+                  ) : (
+                    <DropdownMenuItem>No new notifications</DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+  
+              {/* Balance */}
+              <div className="flex items-center text-lg">
+                <Coins className="h-6 w-6 text-green-500" />
+                <span className="ml-1 font-semibold">
+                  {balance.toFixed(2)}
+                </span>
+              </div>
+  
+              {/* User Menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center text-lg">
+                    <User className="h-6 w-6 mr-1" />
+                    <span className="hidden sm:block mr-1">
+                      {user?.fullName || "User"}
+                    </span>
+                    <ChevronDown className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem>
+                    <Link href="/settings">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <SignOutButton />
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
+            <AuthButton />
+          )}
+        </div>
+  
+        {/* Mobile menu button */}
+        <div className="flex items-center md:hidden space-x-4">
+          {!isSignedIn && <AuthButton />}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6" />
             ) : (
-              <AuthButton />
+              <Menu className="h-6 w-6" />
             )}
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="flex items-center md:hidden space-x-4">
-            {!isSignedIn && <AuthButton />}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </Button>
-          </div>
+          </Button>
         </div>
       </div>
-
+  
       {/* Mobile menu */}
       {isMobileMenuOpen && (
         <div className="md:hidden">
@@ -301,13 +299,13 @@ export default function Navbar() {
                 </Button>
               </Link>
             ))}
-
+  
             {/* Mobile user section */}
             {isSignedIn && (
               <div className="border-t border-gray-200 pt-4">
                 <div className="flex items-center justify-between px-4 py-2">
-                  <div className="flex items-center">
-                    <Coins className="h-5 w-5 text-green-500" />
+                  <div className="flex items-center text-lg">
+                    <Coins className="h-6 w-6 text-green-500" />
                     <span className="ml-1 font-semibold">
                       {balance.toFixed(2)}
                     </span>
@@ -323,4 +321,8 @@ export default function Navbar() {
       )}
     </nav>
   );
+  
+  
+  
+  
 }
